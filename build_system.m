@@ -5,7 +5,6 @@
     поправить.
 %}
 function [system, syndrom] = build_system(codeword, h) 
-  disp(codeword)
   syndrom = [];
   system = [];
   indexing = 1;

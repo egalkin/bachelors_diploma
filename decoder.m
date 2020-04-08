@@ -13,7 +13,8 @@ m = 2;
 L = 2;
 W = m + L + 1;
 n = 2 ^ m;
-converted_codeword = [];
+k = n - 1;
+converted_codeword = zeros(1, length(splited_codeword) * n);
 indexing = 1;
 % Преобразуем кодовое слово в список, стирания я заменил пока на -1.
 for i = 1:length(splited_codeword)
@@ -27,17 +28,19 @@ for i = 1:length(splited_codeword)
     indexing = indexing + 1;
   end
 end
+
 % Добавляем нули в начала и конец, в конец, так как последовательность не
 % полубесконечная и чтобы все декодировать это было нужно.
+real_blocks_num = length(converted_codeword) / n;
 converted_codeword = [zeros(1,n * m), converted_codeword, zeros(1,n * m)];
 blocks_num = length(converted_codeword) / n;
-decoded_word = [];
+decoded_word = zeros(1, real_blocks_num * k);
 l = 0;
 r = W;
 % Двигаем окно вдоль кодового слова и декодируем.
 while r <= blocks_num
   [decoded_window, codeword_subblock] = decode_in_window(converted_codeword(l*n+1:r*n), m, h);
-  decoded_word = [decoded_word, decoded_window];
+  decoded_word(l*k+1:l*k+k) = decoded_window;
   converted_codeword(l*n+1:r*n) = codeword_subblock;
   l = l + 1;
   r = r + 1;
