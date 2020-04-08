@@ -1,3 +1,12 @@
+
+%{
+    Здесь мы получается декодируем код из нашего окна. Сначала мы строим
+    систему уравнений умножив codewor на проверочную матрицу. После мы
+    смотрим чтоб, система была квадратной и если нет, то преобразуем ее
+    удалив нулевые строки. После преобразований проверим то, что матрица
+    обратима. Дальше решаем ее методом гаусса и подставляем
+    восстановленные значения на стертые позиции. 
+%}
 function [decoded_block, codeword] =  decode_in_window(codeword, m, h) 
   n = 2 ^ m;
   [system, z] = build_system(codeword, h);
@@ -16,6 +25,10 @@ function [decoded_block, codeword] =  decode_in_window(codeword, m, h)
   decoded_block = codeword(m * n + 1: m * n + n - 1);
 end
 
+%{
+   Преобразуем систему к квадратному виду путем удаления лишних нулевых
+   строк.
+%}
 function [system, z] = preprocess_system(system, z)
     while size(system,1) ~= size(system,2)
         for i = 1:size(system,1)
@@ -28,6 +41,7 @@ function [system, z] = preprocess_system(system, z)
     end
 end
 
+% Проверяем, что матрица обратима.
 function invertible = is_invertible(system)
     invertible = size(system,1) == size(system,2) && rank(system) == size(system,1);
 end
