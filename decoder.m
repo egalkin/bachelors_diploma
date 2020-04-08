@@ -5,7 +5,7 @@ h = [
     ];
     
 
-codeword = "1100 1f0f 0010 0001 1010";
+codeword = "1100 1f0f 001f 0001 1010";
 
 splited_codeword = strsplit(codeword);
 
@@ -40,59 +40,7 @@ while r <= blocks_num
 end
 disp(decoded_word)
 
-function [system, syndrom] = build_system(codeword, h) 
-  syndrom = [];
-  system = [];
-  indexing = 1;
-  for r = 1:size(h,1)
-    system_indexing = 1;
-    bits = 0;
-    system_column = [];
-    for i = 1:size(codeword,2)
-      if codeword(i) >= 0
-        bits = bits + codeword(i) * h(r, i);
-      else
-        system_column(system_indexing) = abs(codeword(i)) * h(r,i);
-        system_indexing = system_indexing + 1;
-      end
-    end
-    bits = mod(bits,2);
-    system = [system; system_column];
-    syndrom(indexing) = bits;
-    indexing = indexing + 1;
-  end
-end
 
-function [system, z] = preprocess_system(system, z)
-    while size(system,1) ~= size(system,2)
-        for i = 1:size(system,1)
-            if system(i, :) == 0
-                system(i, :) = [];
-                z(i) = [];
-                break
-            end
-        end
-    end
-end
 
-function invertible = is_invertible(system)
-    invertible = size(system,1) == size(system,2) && rank(system) == size(system,1);
-end
 
-function [decoded_block, codeword] =  decode_in_window(codeword, m, h) 
-  n = 2 ^ m;
-  decoded_block = [];
-  [system, z] = build_system(codeword, h);
-  [system, z] = preprocess_system(system, z);
-  if is_invertible(system) && ~isempty(system)
-      solution = mod(linsolve(system, z.').', 2);
-      idx = 1;
-      for i = 1:size(codeword,2)
-          if codeword(i) == -1
-              codeword(i) = solution(idx);
-              idx = idx + 1;          
-          end
-      end
-  end
-  decoded_block = codeword(m * n + 1: m * n + n - 1);
-end
+
