@@ -13,9 +13,8 @@ function [decoded_block, codeword] =  decode_in_window(codeword, m, h)
   [system, z] = preprocess_system(system, z);
   if is_invertible(system) && ~isempty(system)
       solution = gauss(system, z);
-      disp(solution)
       idx = 1;
-      for i = 1:size(codeword,2)
+      for i = 1:length(codeword)
           if codeword(i) == -1
               codeword(i) = solution(idx);
               idx = idx + 1;          
@@ -30,6 +29,9 @@ end
    строк.
 %}
 function [system, z] = preprocess_system(system, z)
+    if length(system) > length(z) 
+        return
+    end
     while size(system,1) ~= size(system,2)
         for i = 1:size(system,1)
             if system(i, :) == 0

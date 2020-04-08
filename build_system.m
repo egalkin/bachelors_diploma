@@ -5,6 +5,7 @@
     поправить.
 %}
 function [system, syndrom] = build_system(codeword, h) 
+  disp(codeword)
   syndrom = [];
   system = [];
   indexing = 1;
@@ -12,7 +13,7 @@ function [system, syndrom] = build_system(codeword, h)
     system_indexing = 1;
     bits = 0;
     system_row = [];
-    for i = 1:size(codeword,2)
+    for i = 1:length(codeword)
       if codeword(i) >= 0
         bits = bits + codeword(i) * h(r, i);
       else

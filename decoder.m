@@ -5,7 +5,7 @@ h = [
     ];
     
 
-codeword = "1100 1f0f 001f 0001 1010";
+codeword = "1100 1f0f 001f 0001 10f0";
 
 splited_codeword = strsplit(codeword);
 
@@ -16,9 +16,9 @@ n = 2 ^ m;
 converted_codeword = [];
 indexing = 1;
 % Преобразуем кодовое слово в список, стирания я заменил пока на -1.
-for i = 1:size(splited_codeword,2)
+for i = 1:length(splited_codeword)
   code_block = splited_codeword{i};
-  for j = 1:size(code_block,2)
+  for j = 1:length(code_block)
     if code_block(j) ~= 'f'
       converted_codeword(indexing) = code_block(j) - '0';
     else
@@ -30,7 +30,7 @@ end
 % Добавляем нули в начала и конец, в конец, так как последовательность не
 % полубесконечная и чтобы все декодировать это было нужно.
 converted_codeword = [zeros(1,n * m), converted_codeword, zeros(1,n * m)];
-blocks_num = size(converted_codeword,2) / n;
+blocks_num = length(converted_codeword) / n;
 decoded_word = [];
 l = 0;
 r = W;
