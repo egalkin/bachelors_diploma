@@ -47,7 +47,3 @@ while r <= blocks_num
 end
 disp(decoded_word)
 
-
-
-
-
