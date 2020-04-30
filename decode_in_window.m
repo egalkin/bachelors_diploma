@@ -10,10 +10,11 @@ function [decoded_block, codeword] =  decode_in_window(codeword, m, h)
   n = 2 ^ m;
   [system, z] = build_system(codeword, h);
   [system, z] = preprocess_system(system, z);
-  if is_invertible(system) && ~isempty(system)
+  if has_solution(system, [system z.']) && ~isempty(system)
+%       solution = mod(linsolve(system,z.').',2);
       solution = gauss(system, z);
       idx = 1;
-      for i = 1:length(codeword)
+      for i = m * n + 1:length(codeword)
           if codeword(i) == -1
               codeword(i) = solution(idx);
               idx = idx + 1;          
@@ -28,21 +29,19 @@ end
    строк.
 %}
 function [system, z] = preprocess_system(system, z)
-    if length(system) > length(z) 
+    if length(system) ~= length(z) 
         return
     end
-    while size(system,1) ~= size(system,2)
-        for i = 1:size(system,1)
-            if system(i, :) == 0
-                system(i, :) = [];
-                z(i) = [];
-                break
-            end
-        end
-    end
+    [n, m] = size(system);
+    system(1:n, m+1) = z;
+    system = unique(system, 'row');
+    system = system(any(system,2),:);
+    n = size(system, 1);
+    z = system(1:n, m+1).';
+    system = system(1:n, 1:m);
 end
 
 % Проверяем, что матрица обратима.
-function invertible = is_invertible(system)
-    invertible = size(system,1) == size(system,2) && rank(system) == size(system,1);
+function has_solution = has_solution(matrix, extended_matrix)
+    has_solution = rank(matrix) == size(matrix,2) && rank(matrix) == rank(extended_matrix);
 end

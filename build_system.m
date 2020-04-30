@@ -20,9 +20,11 @@ function [system, syndrom] = build_system(codeword, h)
         system_indexing = system_indexing + 1;
       end
     end
-    bits = mod(bits,2);
-    system = [system; system_row];
-    syndrom(indexing) = bits;
-    indexing = indexing + 1;
+    if ~all(system_row(:) == 0) % && size(system, 1) ~= size(system_row,2)
+        bits = mod(bits,2);
+        system = [system; system_row];
+        syndrom(indexing) = bits;
+        indexing = indexing + 1;
+    end
   end
 end
