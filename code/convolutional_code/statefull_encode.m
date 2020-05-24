@@ -1,10 +1,5 @@
-function encoded_message = encode2(message)
-    g_formated = [1 0 1; 1 1 0].';
-    state = zeros(3, 2);
-    
+function [encoded_message, state] = statefull_encode(message, g_formated, state)    
     m = 2;
-    L = 2;
-    W = m + L + 1;
     n = 2 ^ m;
     k = n - 1;
     blocks_number = length(message) / k;
@@ -23,6 +18,3 @@ function encoded_message = encode2(message)
         encoded_message((i-1) * n + 1: (i-1) * n + n) = [cur_encoded_block v];
     end
 end
-
-
-

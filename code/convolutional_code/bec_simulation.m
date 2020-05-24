@@ -17,7 +17,7 @@ correct = 0;
 
 for test = 1:test_num
 message = [randi([0, 1], 1 ,blocks_num * k), zeros(1, added_blocks_num * k)];
-encoded_message = encode2(message);
+encoded_message = encode(message);
 % disp(mod(encoded_message * h.', 2) == 0);
 erasure_number = 0;
 for i = 1:length(encoded_message) - k * added_blocks_num
