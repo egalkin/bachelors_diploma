@@ -3,7 +3,6 @@ e_pr = 0.1;
 blocks_num = 1000;
 m = 2;
 L = 2;
-decoder = Decoder(m, L);
 W = 5;
 k = 3;
 n = 4;
@@ -13,11 +12,16 @@ max_erasures = 2;
 
 correct = 0;
 
+g_formated = [1 0 1; 1 1 0].';
+h_row = [[1,1,0,0], [1,0,1,0], [1,1,1,1]];
+
+decoder = Decoder(h_row, m, L);
+
 test_passed = 1;
 
 for test = 1:test_num
     message = [randi([0, 1], 1 ,blocks_num * k), zeros(1, added_blocks_num * k)];
-    encoded_message = encode(message);
+    encoded_message = encode(g_formated, message, m);
     erasure_number = 0;
     for i = 1:length(encoded_message) - k * added_blocks_num
         erasure = rand;
@@ -27,7 +31,7 @@ for test = 1:test_num
         end
     end
     message = message(1:end-k * added_blocks_num);
-    decoded_message1 = decode(encoded_message, added_blocks_num);
+    decoded_message1 = decode(h_row, encoded_message, added_blocks_num, m, L);
     decoded_message2 = zeros(1, blocks_num * k);
     for i = 1:W-m
         decoder.decode(encoded_message((i-1)*n+1:(i-1)*n+n));

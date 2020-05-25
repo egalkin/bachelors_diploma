@@ -1,15 +1,14 @@
-function decoded_message = decode(encoded_message, added_blocks_num)
-    h = [
-        [1,1,0,0], [1,0,1,0], [1,1,1,1], [0,0,0,0], [0,0,0,0];
-        [0,0,0,0], [1,1,0,0], [1,0,1,0], [1,1,1,1], [0,0,0,0];
-        [0,0,0,0], [0,0,0,0], [1,1,0,0], [1,0,1,0], [1,1,1,1]
-        ];
+function decoded_message = decode(h_row, encoded_message, added_blocks_num, m, L)
 
-    m = 2;
-    L = 2;
     W = m + L + 1;
     n = 2 ^ m;
     k = n - 1;
+    
+    h_row = [h_row, zeros(1, (W - length(h_row) / n) * n)];
+    h = zeros(W-m, W * n);
+    for i = 0:W-m-1
+        h(i+1, :) = circshift(h_row, i * n , 2);
+    end 
 
     % Добавляем нули в начала и конец, в конец, так как последовательность не
     % полубесконечная и чтобы все декодировать это было нужно.
@@ -27,7 +26,7 @@ function decoded_message = decode(encoded_message, added_blocks_num)
       l = l + 1;
       r = r + 1;
     end
-    if added_blocks_num >= m
+    if added_blocks_num > L
         decoded_message = decoded_message(1:end - k * (added_blocks_num - m));
     end
     

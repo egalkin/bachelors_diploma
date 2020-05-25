@@ -2,27 +2,28 @@ classdef Decoder < handle
     properties 
         h_row = [[1,1,0,0], [1,0,1,0], [1,1,1,1]]
         h;
-        m;
-        L;
+        m = 2;
+        L = 2;
         W;
         n;
         k;
         window_state;
     end
     methods 
-        function obj = Decoder(m, L)
-            if nargin == 2
+        function obj = Decoder(h_row, m, L)
+            if nargin == 3
+                obj.h_row = h_row;
                 obj.m = m;
-                obj.L = L;
-                obj.W = obj.m + obj.L + 1;
-                obj.n = 2 ^ obj.m;
-                obj.k = obj.n - 1;
-                obj.window_state = zeros(1, obj.m * obj.n);
-                obj.h_row = [obj.h_row, zeros(1, (obj.W - length(obj.h_row) / obj.n) * obj.n) ];
-                obj.h = zeros(obj.W-obj.m, obj.W * obj.n);
-                for i = 0:obj.W-obj.m-1
-                    obj.h(i+1, :) = circshift(obj.h_row, i * obj.n , 2);
-                end 
+                obj.L = L; 
+            end
+            obj.W = obj.m + obj.L + 1;
+            obj.n = 2 ^ obj.m;
+            obj.k = obj.n - 1;
+            obj.window_state = zeros(1, obj.m * obj.n);
+            obj.h_row = [obj.h_row, zeros(1, (obj.W - length(obj.h_row) / obj.n) * obj.n) ];
+            obj.h = zeros(obj.W-obj.m, obj.W * obj.n);
+            for i = 0:obj.W-obj.m-1
+                obj.h(i+1, :) = circshift(obj.h_row, i * obj.n , 2);
             end
         end
         function decoded_block = decode(obj, block)
