@@ -1,22 +1,27 @@
 classdef Encoder < handle
     properties 
          m = 2;
-         g_formated = [1 0 1; 1 1 0].';
-         state = zeros(3, 2);
+         g = [
+            1 0 0 1, 0 0 0 1, 0 0 0 1;
+            0 1 0 1, 0 0 0 0, 0 0 0 1;
+            0 0 1 1, 0 0 0 1, 0 0 0 0;
+         ];
+        state = zeros(3, 2);
+         
     end
     methods 
-        function obj = Encoder(g_formated, m)
+        function obj = Encoder(g, m)
             if nargin == 2
                 obj.m = m;
-                obj.g_formated = g_formated;
-                obj.state = zeros(size(obj.g_formated,1), size(obj.g_formated,2));
+                obj.g = g;
+                obj.state = zeros(size(g,1), m);
             end
         end
         function encoded_block = encode(obj, block)
-            [encoded_block, obj.state] = statefull_encode(block, obj.g_formated, obj.state, obj.m);
+            [encoded_block, obj.state] = statefull_encode(block, obj.g, obj.state, obj.m);
         end
         function clear_state(obj)
-            obj.state = zeros(size(obj.g_formated,1), size(obj.g_formated,2));
+            obj.state = zeros(size(obj.g,1), size(obj.g,2));
         end
     end
 end
