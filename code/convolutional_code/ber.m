@@ -33,7 +33,7 @@ numFrames = 1000;
 
 max_L = 4;
 
-epsilon =  [0.01:0.05:0.25, 0.25];
+epsilon = [0.01:0.02:0.125, 0.125];
 errRates = zeros(max_L,length(epsilon));
 
 uncErrRate = zeros(1,length(epsilon)); 
@@ -63,8 +63,8 @@ for L = 2:max_L
     end
 end
 
-semilogy(epsilon, uncErrRate, epsilon, errRates(2, :), epsilon, errRates(3, :), epsilon, errRates(4, :), epsilon, errRates(5, :))
-legend('Uncoded', 'SWML, L=2', 'SWML, L=3', 'SWML, L=4', 'SWML, L=5')
+semilogy(epsilon, uncErrRate, epsilon, errRates(2, :), epsilon, errRates(3, :), epsilon, errRates(4, :))
+legend('Uncoded', 'SWML, L=2', 'SWML, L=3', 'SWML, L=4')
 xlabel('Erasure probability')
 ylabel('BER')
 

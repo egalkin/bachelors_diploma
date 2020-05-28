@@ -1,21 +1,21 @@
 e_pr = 0.1;
-blocks_num = 2;
+blocks_num = 3;
 m = 2;
-L = 2;
+L = 3;
 n = 2 ^ m;
 k = n - 1;
 test_num = 100;
 added_blocks_num = L;
-max_erasures = 0;
+max_erasures = 2;
 correct = 0;
 
 g = [
-    1 0 0 1, 0 0 0 1, 0 0 0 1;
-    0 1 0 1, 0 0 0 0, 0 0 0 1;
-    0 0 1 1, 0 0 0 1, 0 0 0 0;
+    1 0 1 0, 0 1 1 1, 0 0 0 0;
+    0 1 1 0, 1 0 0 1, 1 0 0 0;
+    0 0 1 1, 0 1 0 0, 1 1 0 0;
 ];
 
-h_row = [[1,1,0,0], [1,0,1,0], [1,1,1,1]];
+h_row = [[0 0 1 1], [1 1 1 1], [1 0 0 0], [1 1 0 0], [1 0 0 1], [1 1 1 1]];
 
 for test = 1:test_num
 message = [randi([0, 1], 1 ,blocks_num * k), zeros(1, added_blocks_num * k)];
@@ -33,7 +33,14 @@ decoded_message = decode(h_row ,encoded_message, added_blocks_num, m, L);
 
 if isequal(message, decoded_message)
     correct = correct+1; 
+else 
+    disp(message)
+    disp(encoded_message)
+    disp(decoded_message)
+    break;
 end
+
+
 end
 disp(correct / test_num);
 
