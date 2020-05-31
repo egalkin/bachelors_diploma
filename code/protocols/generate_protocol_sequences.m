@@ -1,3 +1,6 @@
+% Строим множество протокольных последовательностей по переданному
+% представлению графового кода.
+
 function protocol_sequneces = generate_protocol_sequences(H_conv, M)
 
     [m, n] = size(H_conv);

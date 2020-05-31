@@ -39,6 +39,7 @@ unique_seqs = 0;
 
 protocols_shuffle = randperm(length(1:P));
 
+% Симуляция доступа в канал и оценка конфликтов на подкадр.
 
 for i = 1:T
     for user_num = 1:max_user_num

@@ -30,6 +30,10 @@ t = 4;
 
 avg_transmissions = zeros(1, P);
 
+% Считаем среднее число конфликтов для комбинаций с повторениями. Тестовая
+% штука, так как при больших значениях P для некоторых значений k число
+% рассматриваемых случаев становится огромным.
+
 for active_protocols_num = 2:P 
     protocols_usage = multicombination(1:P, active_protocols_num);
     avg_transmission_number = 0;

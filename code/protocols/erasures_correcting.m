@@ -37,6 +37,8 @@ packet_loss_probability = zeros(1, length(users_distr));
 
 test_number = 100;
 
+% Собственно симуляция самого канала. 
+
 for ii = 1:length(users_distr)
     for test = 1:test_number
         active_users = users_distr(ii);
