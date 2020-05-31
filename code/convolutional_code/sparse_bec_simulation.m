@@ -18,6 +18,9 @@ blocks_values = (5:100);
 probs = zeros(1, length(blocks_values));
 erasures_number = zeros(1, length(blocks_values));
 
+% Тестовая симуляция, показывающая возможность исправлять ошибки, при
+% равномерном их разнесении по кодовому слову.
+
 for block = 1: length(blocks_values)
     correct = 0;
     mid_earausre_num = 0;

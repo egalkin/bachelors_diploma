@@ -38,6 +38,10 @@ errRates = zeros(max_L,length(epsilon));
 
 uncErrRate = zeros(1,length(epsilon)); 
 
+% Считаем битовую ошибку для разных кодов с разными параметрами окна,
+% массив epsilon показывает вероятности стирания в канале, для разных кодов
+% он разный и его максимальное значение считается как 1 - R, где R -
+% скорость кода.
 
 for L = 2:max_L
     code = 2;
@@ -68,6 +72,9 @@ legend('Uncoded', 'SWML, L=2', 'SWML, L=3', 'SWML, L=4')
 xlabel('Erasure probability')
 ylabel('BER')
 
+
+
+% Симулируем передачу через двоичный канал со стираниями (BEC)
 
 function encoded_message = transmit_message(encoded_message, eps)
     for i = 1:length(encoded_message)
