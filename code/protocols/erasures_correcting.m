@@ -31,16 +31,18 @@ T = length(protocol_sequences);
 
 frame_number = 200;
 
-users_distr = [2:50:100, 100];
+users_distr = [100];
 packet_loss_probability = zeros(1, length(users_distr));
 uncoded_packet_loss_probability = zeros(1, length(users_distr));
 
 
-test_number = 100;
+test_number = 1000;
 
 % Собственно симуляция самого канала. Так как в matlab несильно развито
 % ООП, симуляция канала отчасти была написана процедурно, отчасти в ООП
 % стиле.
+
+t1 = clock;
 
 for ii = 1:length(users_distr)
     % Деламе тесты для конкретного значения числа активных пользователей,
@@ -50,8 +52,10 @@ for ii = 1:length(users_distr)
         active_users = users_distr(ii);
         % Полученные от пользователей сообщения
         recieved_messages = zeros(active_users, k * blocks_num);
+        uncoded_recieved_messages = zeros(active_users, k * blocks_num);
         % Вероятность выхода в канал пользователем
         user_access_probability = rand(1, active_users);
+        acess_probability = sum(user_access_probability) / length(user_access_probability);
         % Протокольные последовательности, используемые пользователями
         users_protocol_sequences = zeros(active_users, T);
         % Стэйт пользователя. Для подробностей смотри класс User
@@ -60,6 +64,7 @@ for ii = 1:length(users_distr)
         decoders = cell(active_users);
                 
         users_recieved_blocks_id = cell(active_users, 1);
+        uncoded_recieved_blocks_id = cell(active_users, 1);
         % Данные, которые хотим передать.
         need_to_transmit = cell(active_users, 1);
         transmited_packet_id = cell(active_users, 1);
@@ -77,6 +82,7 @@ for ii = 1:length(users_distr)
         for user_num = 1:active_users
             decoders{user_num} = Decoder;
             users_recieved_blocks_id{user_num} = 0;
+            uncoded_recieved_blocks_id{user_num} = 0;
             transmited_packet_id{user_num} = 1;
         end
 
@@ -98,7 +104,7 @@ for ii = 1:length(users_distr)
             for sub_frame = 1:T
                 for user_num = 1:active_users 
                     % Пользователи пытаются выйти в канал.
-                    if ~is_user_active(user_num) && user_access_probability(user_num) >= rand
+                    if ~is_user_active(user_num) && acess_probability >= rand
                         users_protocol_sequences(user_num, :) = protocol_sequences(protocols_shuffle(user_num), :);
                         % Если пользователь выходит впервые инициализируем
                         % для него стейт, если повторно, то очищаем старый
@@ -128,19 +134,11 @@ for ii = 1:length(users_distr)
                             recieved_messages(user_num, k*id+1:k*id+k) = decoded_block;
                             message = active_users_state{user_num}.get_message;
                             % Считаем статистику.
-                            if isequal(recieved_messages(user_num,:), message)
-                                successfully_transmited_messages = successfully_transmited_messages + 1;
-                                successfully_transmited_packets = successfully_transmited_packets + length(message)/ n;
-                            else 
-                                for i = 1:length(message)/n
-                                   if isequal(recieved_messages(user_num, (i-1)*k+1:(i-1)*k+k), message((i-1)*k+1:(i-1)*k+k))
-                                       successfully_transmited_packets = successfully_transmited_packets + 1;
-                                   end
-                                end
-                            end
-                            total_transmitted_messages = total_transmitted_messages + 1;
-                            total_transmitted_packets = total_transmitted_packets + length(message)/ n;
+                            successfully_transmited_packets = successfully_transmited_packets + sum(recieved_messages(user_num,:)~=-1);
+                            uncoded_successfully_transmited_packets = uncoded_successfully_transmited_packets + sum(uncoded_recieved_messages(user_num, 1:length(message))~=-1);
+                            total_transmitted_packets = total_transmitted_packets + length(message);
                             users_recieved_blocks_id{user_num} = 0;
+                            uncoded_recieved_blocks_id{user_num} = 0;
                             is_user_active(user_num) = 0;
                         end
                         if transmited_packet_id{user_num} > n
@@ -168,6 +166,9 @@ for ii = 1:length(users_distr)
             % Передаем данные. 
             for user_num = 1:active_users
                 if length(will_be_transmited{user_num}) == n
+                    unc_id = uncoded_recieved_blocks_id{user_num};
+                    uncoded_recieved_messages(user_num, k*unc_id+1:k*unc_id+k) = will_be_transmited{user_num}(1:n-1);
+                    uncoded_recieved_blocks_id{user_num} = unc_id + 1;
                     decoded_block = decoders{user_num}.decode(will_be_transmited{user_num});
                     if ~isempty(decoded_block)
                         id = users_recieved_blocks_id{user_num};
@@ -181,13 +182,19 @@ for ii = 1:length(users_distr)
         end
 
         packet_loss_probability(ii) = packet_loss_probability(ii) +  (1 - successfully_transmited_packets / total_transmitted_packets);
+        uncoded_packet_loss_probability(ii) = uncoded_packet_loss_probability(ii) +  (1 - uncoded_successfully_transmited_packets / total_transmitted_packets);
     end
     packet_loss_probability(ii) = packet_loss_probability(ii) / test_number;
+    uncoded_packet_loss_probability(ii) = uncoded_packet_loss_probability(ii) / test_number;
 end
 
+t2 = clock;
 
-semilogy(users_distr, packet_loss_probability);
+disp(t2-t1);
+
+
+
+semilogy(users_distr, uncoded_packet_loss_probability, users_distr, packet_loss_probability);
+legend('Uncoded', 'SWML');
 xlabel("Num of users in channel");
-ylabel("Packet loss probability"); 
-
-
+ylabel("Packet loss probability");
