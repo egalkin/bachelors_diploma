@@ -69,8 +69,8 @@ end
 
 semilogy(epsilon, uncErrRate, epsilon, errRates(2, :), epsilon, errRates(3, :), epsilon, errRates(4, :))
 legend('Uncoded', 'SWML, L=2', 'SWML, L=3', 'SWML, L=4')
-xlabel('Erasure probability')
-ylabel('BER')
+xlabel('Веротность стирания')
+ylabel('Вероятность ошибки на бит')
 
 
 

@@ -13,7 +13,7 @@ function [decoded_block, codeword] =  decode_in_window(codeword, m, h)
   if  ~isempty(system) &&  has_solution(system, [system z.'])
       solution = gflineq(system, z.');
       idx = 1;
-      for i = m * n + 1: m * n + n
+      for i = m * n + 1:length(codeword)
           if codeword(i) == -1
               codeword(i) = solution(idx);
               idx = idx + 1;          

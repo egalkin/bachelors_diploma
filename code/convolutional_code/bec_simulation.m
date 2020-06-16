@@ -1,12 +1,12 @@
-e_pr = 0.1;
-blocks_num = 3;
+e_pr = 0.8;
+blocks_num = 1000;
 m = 2;
 L = 3;
 n = 2 ^ m;
 k = n - 1;
 test_num = 100;
 added_blocks_num = L;
-max_erasures = 2;
+max_erasures = 4;
 correct = 0;
 
 g = [
@@ -34,10 +34,10 @@ decoded_message = decode(h_row ,encoded_message, added_blocks_num, m, L);
 if isequal(message, decoded_message)
     correct = correct+1; 
 else 
-    disp(message)
-    disp(encoded_message)
-    disp(decoded_message)
-    break;
+%     disp(message)
+%     disp(encoded_message)
+%     disp(decoded_message)
+%     break;
 end
 
 
