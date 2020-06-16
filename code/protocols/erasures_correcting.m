@@ -29,14 +29,14 @@ end
 P = size(protocol_sequences, 1);
 T = length(protocol_sequences);
 
-frame_number = 200;
+max_frame_number = 200;
 
-users_distr = [100];
+users_distr = [2:5:100, 100];
 packet_loss_probability = zeros(1, length(users_distr));
 uncoded_packet_loss_probability = zeros(1, length(users_distr));
 
 
-test_number = 1000;
+test_number = 50;
 
 % Собственно симуляция самого канала. Так как в matlab несильно развито
 % ООП, симуляция канала отчасти была написана процедурно, отчасти в ООП
@@ -99,7 +99,7 @@ for ii = 1:length(users_distr)
         protocols_shuffle = randperm(length(1:P));
 
         % Начинаем передачу 
-        for frame_number = 1:frame_number
+        for frame_number = 1:max_frame_number
             % Выход пользователя синхронизирована по подкадрам.
             for sub_frame = 1:T
                 for user_num = 1:active_users 
@@ -133,10 +133,10 @@ for ii = 1:length(users_distr)
                             id = users_recieved_blocks_id{user_num};
                             recieved_messages(user_num, k*id+1:k*id+k) = decoded_block;
                             message = active_users_state{user_num}.get_message;
-                            % Считаем статистику.
+                            % Считаем статистику.        
                             successfully_transmited_packets = successfully_transmited_packets + sum(recieved_messages(user_num,:)~=-1);
                             uncoded_successfully_transmited_packets = uncoded_successfully_transmited_packets + sum(uncoded_recieved_messages(user_num, 1:length(message))~=-1);
-                            total_transmitted_packets = total_transmitted_packets + length(message);
+                            total_transmitted_packets = total_transmitted_packets + length(message) / n;
                             users_recieved_blocks_id{user_num} = 0;
                             uncoded_recieved_blocks_id{user_num} = 0;
                             is_user_active(user_num) = 0;
@@ -193,8 +193,7 @@ t2 = clock;
 disp(t2-t1);
 
 
-
 semilogy(users_distr, uncoded_packet_loss_probability, users_distr, packet_loss_probability);
 legend('Uncoded', 'SWML');
-xlabel("Num of users in channel");
-ylabel("Packet loss probability");
+xlabel("Число пользователей в канале");
+ylabel("Вероятность потери пакета");
