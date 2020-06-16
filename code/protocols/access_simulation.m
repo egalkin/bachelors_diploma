@@ -1,18 +1,18 @@
-% H_conv = [
-%            1 0 2 0 3 0 4 0;
-%            1 1 5 0 6 0 7 0;
-%            2 4 5 0 8 0 9 35;
-%            3 29 6 15 8 0 10 0;
-%            4 0 7 0 9 0 10 26;
-%          ];
 H_conv = [
-     1 0 2 0 3 0;
-     1 0 2 1 3 3;
-];
+           1 0 2 0 3 0 4 0;
+           1 1 5 0 6 0 7 0;
+           2 4 5 0 8 0 9 35;
+           3 29 6 15 8 0 10 0;
+           4 0 7 0 9 0 10 26;
+         ];
+% H_conv = [
+%      1 0 2 0 3 0;
+%      1 0 2 1 3 3;
+% ];
           
-M = 7; 
+M = 78; 
 J = 2;
-K = 3;
+K = 4;
 protocol_sequences = generate_protocol_sequences(H_conv, M);
 
 
@@ -35,7 +35,7 @@ users_protocol_sequences = zeros(1, P);
 conflicts = zeros(1, T);
 active_users_distr = zeros(1,T);
 
-unique_seqs = 0;
+unique_seqs = 1;
 
 protocols_shuffle = randperm(length(1:P));
 
@@ -64,12 +64,12 @@ end
 
 figure
 plot(1:T, conflicts)
-xlabel('Subframe num')
-ylabel('Conflicts number')
+xlabel('Номер подкадра')
+ylabel('Число конфликтов')
 
 figure
 plot(1:T, active_users_distr)
-xlabel('Subframe num')
-ylabel('Users number')
+xlabel('Номер подкадра')
+ylabel('Число пользователей')
 
 
