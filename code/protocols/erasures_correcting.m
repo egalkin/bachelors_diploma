@@ -36,13 +36,11 @@ packet_loss_probability = zeros(1, length(users_distr));
 uncoded_packet_loss_probability = zeros(1, length(users_distr));
 
 
-test_number = 50;
+test_number = 1000;
 
 % Собственно симуляция самого канала. Так как в matlab несильно развито
 % ООП, симуляция канала отчасти была написана процедурно, отчасти в ООП
 % стиле.
-
-t1 = clock;
 
 for ii = 1:length(users_distr)
     % Деламе тесты для конкретного значения числа активных пользователей,
@@ -136,7 +134,7 @@ for ii = 1:length(users_distr)
                             % Считаем статистику.        
                             successfully_transmited_packets = successfully_transmited_packets + sum(recieved_messages(user_num,:)~=-1);
                             uncoded_successfully_transmited_packets = uncoded_successfully_transmited_packets + sum(uncoded_recieved_messages(user_num, 1:length(message))~=-1);
-                            total_transmitted_packets = total_transmitted_packets + length(message) / n;
+                            total_transmitted_packets = total_transmitted_packets + length(message);
                             users_recieved_blocks_id{user_num} = 0;
                             uncoded_recieved_blocks_id{user_num} = 0;
                             is_user_active(user_num) = 0;
@@ -187,10 +185,6 @@ for ii = 1:length(users_distr)
     packet_loss_probability(ii) = packet_loss_probability(ii) / test_number;
     uncoded_packet_loss_probability(ii) = uncoded_packet_loss_probability(ii) / test_number;
 end
-
-t2 = clock;
-
-disp(t2-t1);
 
 
 semilogy(users_distr, uncoded_packet_loss_probability, users_distr, packet_loss_probability);

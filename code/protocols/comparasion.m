@@ -34,7 +34,7 @@ max_frame_number = 500;
 users_distr = [2:5:100, 100];
 successfully_transmited_packets = zeros(1, length(users_distr));
 
-test_number = 10;
+test_number = 100;
 
 for ii = 1:length(users_distr)
     % Деламе тесты для конкретного значения числа активных пользователей,
@@ -113,15 +113,7 @@ for ii = 1:length(users_distr)
                             id = users_recieved_blocks_id{user_num};
                             recieved_messages(user_num, k*id+1:k*id+k) = decoded_block;
                             message = active_users_state{user_num}.get_message;
-                            if isequal(recieved_messages(user_num,:), message)
-                                successfully_transmited_packets(ii) = successfully_transmited_packets(ii) + length(message)/ n;
-                            else 
-                                for i = 1:length(message)/n
-                                   if isequal(recieved_messages(user_num, (i-1)*k+1:(i-1)*k+k), message((i-1)*k+1:(i-1)*k+k))
-                                       successfully_transmited_packets(ii) = successfully_transmited_packets(ii) + 1;
-                                   end
-                                end
-                            end
+                            successfully_transmited_packets(ii) = successfully_transmited_packets(ii) + sum(recieved_messages(user_num,:)~=-1);
                             users_recieved_blocks_id{user_num} = 0;
                             is_user_active(user_num) = 0;
                         end
@@ -165,9 +157,7 @@ for ii = 1:length(users_distr)
     successfully_transmited_packets(ii) = floor(successfully_transmited_packets(ii) / test_number);
 end
 
-orthogonal_sequences = generate_orthogonal_sequences(100);
-orthogonal_P = size(orthogonal_sequences, 1); 
-orthogonal_T = length(orthogonal_sequences);
+orthogonal_sequences = generate_orthogonal_sequences(P,T);
 
 orthogonal_successfully_transmited_packets = zeros(1, length(users_distr));
 
@@ -206,7 +196,7 @@ for ii = 1:length(users_distr)
         % Начинаем передачу 
         for frame_number = 1:max_frame_number
             % Выход пользователя синхронизирована по подкадрам.
-            for sub_frame = 1:orthogonal_T
+            for sub_frame = 1:T
                 for user_num = 1:active_users 
                     % Пользователи пытаются выйти в канал.
                     if ~is_user_active(user_num) && acess_probability >= rand
@@ -233,8 +223,7 @@ for ii = 1:length(users_distr)
                         % посчитать статистику.
                         if isempty(need_to_transmit{user_num})
                             message = active_users_state{user_num}.get_message;
-                            % Считаем статистику.
-                            orthogonal_successfully_transmited_packets(ii) = orthogonal_successfully_transmited_packets(ii) + length(message) / n;
+                            orthogonal_successfully_transmited_packets(ii) = orthogonal_successfully_transmited_packets(ii) + length(message);
                             orthogonal_recieved_blocks_id{user_num} = 0;
                             is_user_active(user_num) = 0;
                         end

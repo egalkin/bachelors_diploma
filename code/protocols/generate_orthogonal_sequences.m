@@ -1,9 +1,9 @@
-function orthogonal_sequneces = generate_orthogonal_sequences(user_num)
-    orthogonal_sequence_row = [1, zeros(1, user_num-1)];
+function orthogonal_sequneces = generate_orthogonal_sequences(P, T)
+    orthogonal_sequence_row = [ones(1, floor(T/P)), zeros(1, T - floor(T/P))];
     
     orthogonal_sequneces = [];
     
-    for i = 0:user_num-1
+    for i = 0:P-1
         orthogonal_sequneces = [orthogonal_sequneces; circshift(orthogonal_sequence_row, i, 2)];
     end
 end
